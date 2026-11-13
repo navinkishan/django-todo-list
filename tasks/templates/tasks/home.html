@@ -1,0 +1,552 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My To-Do List</title>
+
+    
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background: #f1f5f9;
+                margin: 0;
+                padding: 40px;
+            }
+
+            .container {
+                max-width: 650px;
+                margin: auto;
+                background: white;
+                padding: 30px;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            }
+
+            h1 {
+                text-align: center;
+                color: #2563eb;
+            }
+
+            .empty {
+                text-align: center;
+                color: gray;
+            }
+
+            input, textarea {
+                width: 100%;
+                padding: 12px;
+                margin-bottom: 12px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                box-sizing: border-box;
+                font-size: 15px;
+            }
+
+            textarea {
+                height: 80px;
+                resize: vertical;
+            }
+
+            button {
+                background: #2563eb;
+                color: white;
+                border: none;
+                padding: 12px 20px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 15px;
+            }
+
+            button:hover {
+                background: #1d4ed8;
+            }
+
+            /* Dashboard cards */
+
+            .stats {
+                display: flex;
+                gap: 15px;
+                margin: 20px 0;
+            }
+
+            .stat-box {
+                flex: 1;
+                text-align: center;
+                padding: 18px 10px;
+                border-radius: 10px;
+                color: white;
+            }
+
+            .stat-box h2 {
+                font-size: 28px;
+                margin: 5px 0;
+            }
+
+            .stat-box p {
+                margin: 5px 0;
+                font-size: 14px;
+            }
+
+            .total {
+                background: #2563eb;
+            }
+
+            .pending {
+                background: #f59e0b;
+            }
+
+            .completed {
+                background: #16a34a;
+            }
+
+            /* Task cards */
+
+            .task {
+                background: #f8fafc;
+                padding: 18px;
+                margin-top: 15px;
+                border-radius: 10px;
+                border-left: 4px solid #2563eb;
+            }
+
+            .task-status {
+                margin: 12px 0;
+                font-size: 14px;
+            }
+
+            .completed-status {
+                color: #16a34a;
+                font-weight: bold;
+            }
+
+            .pending-status {
+                color: #d97706;
+                font-weight: bold;
+            }
+
+            /* Task buttons */
+
+            .task-actions {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .task-actions form {
+                display: inline-flex;
+                margin: 0;
+            }
+
+            .task-actions button,
+            .btn-edit {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 85px;
+                padding: 10px 14px;
+                border: none;
+                border-radius: 6px;
+                color: white;
+                font-size: 14px;
+                text-decoration: none;
+                cursor: pointer;
+                box-sizing: border-box;
+            }
+
+            .btn-complete {
+                background: #2563eb;
+            }
+
+            .btn-edit {
+                background: #f59e0b;
+            }
+
+            .btn-delete {
+                background: #dc2626;
+            }
+
+            .task-actions button:hover,
+            .btn-edit:hover {
+                opacity: 0.85;
+            }
+
+            /* Search and Filter */
+
+            .search-filter {
+                margin: 20px 0;
+            }
+
+            .search-filter form {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .search-filter input {
+                flex: 2;
+                min-width: 140px;
+                margin: 0;
+            }
+
+            .search-filter select {
+                flex: 1;
+                min-width: 120px;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                background: white;
+            }
+
+            .btn-search {
+                background: #2563eb;
+                color: white;
+                border: none;
+                padding: 12px 14px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+
+            .btn-reset {
+                background: #64748b;
+                color: white;
+                padding: 12px 14px;
+                border-radius: 6px;
+                text-decoration: none;
+            }
+
+            .search-filter button:hover,
+            .btn-reset:hover {
+                opacity: 0.85;
+            }
+
+            /* Task Priority */
+
+            .priority-badge {
+                display: inline-block;
+                padding: 6px 12px;
+                border-radius: 15px;
+                font-size: 13px;
+                font-weight: bold;
+                margin-top: 8px;
+            }
+
+            .priority-high {
+                background-color: #ffcccc;
+                color: #cc0000;
+            }
+
+            .priority-medium {
+                background-color: #ffe5b4;
+                color: #995c00;
+            }
+
+            .priority-low {
+                background-color: #ccffcc;
+                color: #006600;
+            }
+
+            .task {
+                position: relative;
+            }
+
+            .task-alert {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+            }
+
+            .task-alert .overdue-badge,
+            .task-alert .due-today-badge {
+                display: inline-block;
+                padding: 6px 10px;
+                border-radius: 6px;
+                font-weight: bold;
+                font-size: 13px;
+            }
+
+         /* Overdue Task */
+            .overdue-badge {
+                display: inline-block;
+                background-color: #ffe0e0;
+                color: #d00000;
+                padding: 5px 12px;
+                border-radius: 6px;
+                font-weight: bold;
+                font-size: 13px;
+            }
+
+            /* Due Today */
+            .due-today-badge {
+                display: inline-block;
+                background-color: #fff0cc;
+                color: #b36b00;
+                padding: 5px 12px;
+                border-radius: 6px;
+                font-weight: bold;
+                font-size: 13px;
+            }
+
+            /* Mobile responsiveness */
+
+            @media (max-width: 480px) {
+
+                body {
+                    padding: 15px;
+                }
+
+                .container {
+                    padding: 20px;
+                }
+
+                .stats {
+                    gap: 8px;
+                }
+
+                .stat-box {
+                    padding: 12px 5px;
+                }
+
+                .stat-box h2 {
+                    font-size: 22px;
+                }
+
+                .stat-box p {
+                    font-size: 11px;
+                }
+
+                .task-actions {
+                    gap: 7px;
+                }
+
+                .task-actions button,
+                .btn-edit {
+                    min-width: 75px;
+                    padding: 9px;
+                }
+
+            }
+
+        </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>My To-Do List</h1>
+
+    <div class="stats">
+
+        <div class="stat-box total">
+            <h2>{{ total_tasks }}</h2>
+            <p>Total Tasks</p>
+        </div>
+
+        <div class="stat-box pending">
+            <h2>{{ pending_tasks }}</h2>
+            <p>Pending Tasks</p>
+        </div>
+
+        <div class="stat-box completed">
+            <h2>{{ completed_tasks }}</h2>
+            <p>Completed Tasks</p>
+        </div>
+
+    </div>
+
+
+<!-- Search and Filter Section -->
+
+<div class="search-filter">
+
+    <form method="GET">
+
+        <input
+            type="text"
+            name="q"
+            placeholder="Search tasks..."
+            value="{{ search_query }}"
+        >
+
+        <select name="status">
+
+            <option value="all"
+                {% if status_filter == 'all' %}selected{% endif %}>
+                All Tasks
+            </option>
+
+            <option value="pending"
+                {% if status_filter == 'pending' %}selected{% endif %}>
+                Pending Tasks
+            </option>
+
+            <option value="completed"
+                {% if status_filter == 'completed' %}selected{% endif %}>
+                Completed Tasks
+            </option>
+
+        </select>
+
+        <!-- Sort Tasks -->
+        <select name="sort">
+
+            <option value="newest"
+                {% if sort_by == 'newest' %}selected{% endif %}>
+                Newest First
+            </option>
+
+            <option value="priority"
+                {% if sort_by == 'priority' %}selected{% endif %}>
+                High Priority First
+            </option>
+
+            <option value="due_date"
+                {% if sort_by == 'due_date' %}selected{% endif %}>
+                Due Date (Earliest First)
+            </option>
+
+        </select>
+
+        <button type="submit" class="btn-search">
+            Search / Filter
+        </button>
+
+        <a href="{% url 'home' %}" class="btn-reset">
+            Reset
+        </a>
+
+    </form>
+
+    <h3>Add New Task</h3>
+
+</div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input
+            type="text"
+            name="title"
+            placeholder="Enter task title"
+            required
+        >
+
+        <textarea
+            name="description"
+            placeholder="Enter task description"
+        ></textarea>
+
+        <label for="due_date">Task Due Date:</label>
+
+        <input
+            type="date"
+            name="due_date"
+            id="due_date"
+        >
+
+        <label for="priority">Task Priority:</label>
+
+        <select name="priority" id="priority" required>
+            <option value="High">High</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="Low">Low</option>
+        </select>
+
+        <button type="submit">Add Task</button>
+    </form>
+
+    <h3>My Tasks</h3>
+
+
+    {% for task in tasks %}
+
+    <div class="task">
+
+        <strong>{{ task.title }}</strong>
+
+        <p>{{ task.description }}</p>
+
+        <p class="priority-badge priority-{{ task.priority|lower }}">
+            Priority: {{ task.priority }}
+        </p>
+
+        {% if task.due_date %}
+            <p>Due Date: {{ task.due_date|date:"d M Y" }}</p>
+        {% else %}
+            <p>No due date set</p>
+        {% endif %}
+
+        <div class="task-alert">
+            {% if task.due_date and not task.completed %}
+                {% now "Y-m-d" as today %}
+
+                {% if task.due_date|date:"Y-m-d" < today %}
+                    <span class="overdue-badge">🚨 Over due</span>
+                {% elif task.due_date|date:"Y-m-d" == today %}
+                    <span class="due-today-badge">⚠️ Due Today</span>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="task-status">
+
+            {% if task.completed %}
+                <span class="completed-status">
+                    ✓ Completed
+                </span>
+            {% else %}
+                <span class="pending-status">
+                    ● Pending
+                </span>
+            {% endif %}
+
+        </div>
+
+        <div class="task-actions">
+
+            {% if not task.completed %}
+
+            <form method="POST"
+                action="{% url 'complete_task' task.id %}">
+                {% csrf_token %}
+                <button class="btn-complete" type="submit">
+                    Complete
+                </button>
+            </form>
+
+            {% endif %}
+
+            <a class="btn-edit"
+            href="{% url 'edit_task' task.id %}">
+                Edit
+            </a>
+
+            <form method="POST"
+                action="{% url 'delete_task' task.id %}"
+                onsubmit="return confirm('Are you sure you want to delete this task?');">
+
+                {% csrf_token %}
+
+                <button class="btn-delete" type="submit">
+                    Delete
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    {% empty %}
+
+    <p class="empty">No tasks available. Add your first task!</p>
+
+    {% endfor %}
+
+</div>
+
+</body>
+</html>
